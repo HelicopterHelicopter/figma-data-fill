@@ -17,6 +17,9 @@ bower_components/
 /dashboard/frontend/.next
 /dashboard/frontend/out
 
+# Backend
+/dashboard/backend/dist
+
 # Typescript
 *.tsbuildinfo
 
