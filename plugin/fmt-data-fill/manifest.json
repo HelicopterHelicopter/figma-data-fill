@@ -12,7 +12,8 @@
   "ui": "ui.html",
   "networkAccess": {
     "allowedDomains": [
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "https://figma-be.jheels.in"
     ],
     "reasoning": "Plugin needs to fetch user-created datasets from the local development server to populate text fields with random data based on field name prefixes.",
     "devAllowedDomains": [

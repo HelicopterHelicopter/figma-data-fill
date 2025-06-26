@@ -43,16 +43,9 @@ function findTextNodes(node: SceneNode): TextNode[] {
   return textNodes;
 }
 
-// Function to extract dataset name from node name with d- prefix
-function getDatasetNameFromNode(nodeName: string): string | null {
-  const lowerName = nodeName.toLowerCase();
-  
-  // Check if node name starts with 'd-'
-  if (lowerName.startsWith('d-')) {
-    return lowerName.substring(2); // Remove 'd-' prefix
-  }
-  
-  return null;
+// Function to get dataset name from node name
+function getDatasetNameFromNode(nodeName: string): string {
+  return nodeName.toLowerCase();
 }
 
 // Function to fetch datasets from API
@@ -164,34 +157,29 @@ figma.ui.onmessage = async (msg: { type: string }) => {
         const nodeName = node.name;
         console.log('Checking node:', nodeName);
         
-        // Extract dataset name from node name (e.g., 'd-names' -> 'names')
+        // Get a dataset name from the node name
         const datasetName = getDatasetNameFromNode(nodeName);
-        
-        if (datasetName) {
-          console.log('Extracted dataset name:', datasetName);
+        console.log('Using dataset name:', datasetName);
+
+        // Check if we have a dataset with this name
+        if (datasets[datasetName]) {
+          console.log('Match found! Filling node with data from dataset:', datasetName);
           
-          // Check if we have a dataset with this name
-          if (datasets[datasetName]) {
-            console.log('Match found! Filling node with data from dataset:', datasetName);
-            
-            // Load the font before setting the text
-            await figma.loadFontAsync(node.fontName as FontName);
-            const randomValue = getRandomItem(datasets[datasetName].data);
-            node.characters = randomValue;
-            console.log('Filled node', nodeName, 'with:', randomValue);
-            filledCount++;
-          } else {
-            console.log('No dataset found for:', datasetName);
-          }
+          // Load the font before setting the text
+          await figma.loadFontAsync(node.fontName as FontName);
+          const randomValue = getRandomItem(datasets[datasetName].data);
+          node.characters = randomValue;
+          console.log('Filled node', nodeName, 'with:', randomValue);
+          filledCount++;
         } else {
-          console.log('Node name does not match d- pattern:', nodeName);
+          console.log('No dataset found for:', datasetName);
         }
       }
 
       if (filledCount > 0) {
         figma.notify(`Filled ${filledCount} text fields with random data`);
       } else {
-        const availableDatasets = Object.keys(datasets).map(name => `d-${name}`).join(', ');
+        const availableDatasets = Object.keys(datasets).join(', ');
         figma.notify(`No matching text fields found. Use names like: ${availableDatasets}`);
       }
     } catch (error) {
