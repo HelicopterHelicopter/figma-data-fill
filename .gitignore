@@ -8,7 +8,7 @@ bower_components/
 
 # Build files
 /build
-/dist
+**/dist
 /out
 /storybook-static
 
