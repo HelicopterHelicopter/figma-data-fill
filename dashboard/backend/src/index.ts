@@ -80,7 +80,7 @@ app.use('*', (req, res) => {
 });
 
 // Start server
-const PORT = config.port || 3001;
+const PORT = config.port || 3000;
 
 async function startServer() {
   try {
