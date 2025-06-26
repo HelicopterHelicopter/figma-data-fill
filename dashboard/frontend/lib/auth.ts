@@ -1,3 +1,5 @@
+import { apiClient, API_BASE_URL } from './api';
+
 interface User {
   id: string;
   email: string;
@@ -71,7 +73,7 @@ class AuthService {
       const credential = response.credential;
       
       // Send credential to backend for verification
-      const authResponse = await fetch('http://localhost:3000/api/v1/auth/google', {
+      const authResponse = await fetch(`${API_BASE_URL}/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ interface Datasets {
 }
 
 // API configuration
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = 'https://figma-be.jheels.in/api/v1';
 
 // This file holds the main code for plugins. Code in this file has access to
 // the *figma document* via the figma global object.
