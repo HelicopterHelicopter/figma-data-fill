@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    button {
+      background-color: #18A0FB;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #0D8DE3;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .instructions {
+      font-size: 12px;
+      color: #333;
+      line-height: 1.4;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      color: #666;
+      margin-top: 10px;
+    }
+    .search-section {
+      border-top: 1px solid #e1e5e9;
+      padding-top: 16px;
+    }
+    .search-container {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e1e5e9;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #18A0FB;
+    }
+    .datasets-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #e1e5e9;
+      border-radius: 6px;
+      background: white;
+    }
+    .dataset-item {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .dataset-item:last-child {
+      border-bottom: none;
+    }
+    .dataset-item:hover {
+      background-color: #f8f9fa;
+    }
+    .dataset-name {
+      font-weight: 500;
+      color: #333;
+      font-size: 14px;
+    }
+    .dataset-description {
+      font-size: 12px;
+      color: #666;
+    }
+    .dataset-prefix {
+      font-size: 11px;
+      color: #18A0FB;
+      font-family: monospace;
+      background: #f0f8ff;
+      padding: 2px 4px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .no-datasets {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Data Fill Plugin</h2>
+    <div class="instructions">
+      <p>1. Select a frame in your Figma document</p>
+      <p>2. Name your text fields with prefixes matching your datasets (e.g., "d-names")</p>
+      <p>3. Click "Fill Data" to populate the fields</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button id="load-datasets">Load Datasets</button>
+      <button id="fill">Fill Data</button>
+    </div>
+    <div id="loading" class="loading">Loading datasets...</div>
+    
+    <div class="search-section">
+      <div class="section-title">Available Datasets</div>
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search datasets..."
+        />
+      </div>
+      <div id="datasets-list" class="datasets-list">
+        <div class="no-datasets">Click "Load Datasets" to see available datasets</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allDatasets = {};
+    let filteredDatasets = {};
+
+    // Search functionality
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      filteredDatasets = {};
+      
+      Object.keys(allDatasets).forEach(key => {
+        if (key.toLowerCase().includes(searchTerm) || 
+            allDatasets[key].description.toLowerCase().includes(searchTerm)) {
+          filteredDatasets[key] = allDatasets[key];
+        }
+      });
+      
+      renderDatasets(filteredDatasets);
+    });
+
+    // Load datasets button
+    document.getElementById('load-datasets').onclick = () => {
+      console.log('Load datasets button clicked');
+      document.getElementById('loading').style.display = 'block';
+      parent.postMessage({ pluginMessage: { type: 'load-datasets' } }, '*');
+    }
+
+    // Fill data button
+    document.getElementById('fill').onclick = () => {
+      console.log('Fill data button clicked');
+      document.getElementById('loading').style.display = 'block';
+      parent.postMessage({ pluginMessage: { type: 'fill-data' } }, '*');
+    }
+
+    // Function to render datasets
+    function renderDatasets(datasets) {
+      console.log('Rendering datasets:', datasets);
+      const listContainer = document.getElementById('datasets-list');
+      
+      if (!datasets || Object.keys(datasets).length === 0) {
+        listContainer.innerHTML = '<div class="no-datasets">No datasets found</div>';
+        return;
+      }
+
+      const items = Object.keys(datasets).map(key => {
+        const dataset = datasets[key];
+        return `
+          <div class="dataset-item">
+            <div class="dataset-name">${key}</div>
+            <div class="dataset-description">${dataset.description}</div>
+            <div class="dataset-prefix">Use: d-${key}</div>
+          </div>
+        `;
+      }).join('');
+
+      listContainer.innerHTML = items;
+    }
+
+    // Listen for messages from the plugin
+    window.addEventListener('message', (event) => {
+      console.log('Received message from plugin:', event.data);
+      const { type, datasets } = event.data.pluginMessage || {};
+      
+      if (type === 'datasets-loaded') {
+        console.log('Datasets loaded successfully:', datasets);
+        document.getElementById('loading').style.display = 'none';
+        allDatasets = datasets;
+        filteredDatasets = datasets;
+        renderDatasets(datasets);
+      } else if (type === 'datasets-error') {
+        console.log('Error loading datasets');
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('datasets-list').innerHTML = 
+          '<div class="no-datasets">Error loading datasets. Please try again.</div>';
+      }
+    });
+
+    // Auto-load datasets when UI is ready - using a more reliable approach
+    console.log('UI script loaded');
+    
+    // Try immediate execution and fallback with timeout
+    function tryAutoLoad() {
+      console.log('Attempting to auto-load datasets');
+      const loadButton = document.getElementById('load-datasets');
+      if (loadButton) {
+        console.log('Load button found, clicking...');
+        loadButton.click();
+      } else {
+        console.log('Load button not found, retrying...');
+        setTimeout(tryAutoLoad, 100);
+      }
+    }
+    
+    // Start auto-load attempt
+    setTimeout(tryAutoLoad, 100);
+  </script>
+</body>
+</html>

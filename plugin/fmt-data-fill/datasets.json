@@ -1,0 +1,22 @@
+{
+  "name": {
+    "description": "Full names of people",
+    "data": ["John Smith", "Emma Johnson", "Michael Brown", "Sarah Davis", "David Wilson"]
+  },
+  "email": {
+    "description": "Email addresses",
+    "data": ["john@example.com", "emma@example.com", "michael@example.com", "sarah@example.com", "david@example.com"]
+  },
+  "phone": {
+    "description": "Phone numbers",
+    "data": ["(555) 123-4567", "(555) 234-5678", "(555) 345-6789", "(555) 456-7890", "(555) 567-8901"]
+  },
+  "address": {
+    "description": "Street addresses",
+    "data": ["123 Main St", "456 Oak Ave", "789 Pine Rd", "321 Elm Blvd", "654 Maple Dr"]
+  },
+  "company": {
+    "description": "Company names",
+    "data": ["Tech Corp", "Global Inc", "Innovate Co", "Future Systems", "Digital Solutions"]
+  }
+} 

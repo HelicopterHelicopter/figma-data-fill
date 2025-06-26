@@ -1,0 +1,289 @@
+{
+	"info": {
+		"_postman_id": "fmt-data-fill-api-collection",
+		"name": "FMT Data Fill API",
+		"description": "Complete API collection for FMT Data Fill Dashboard Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get Google OAuth URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/google/url",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"google",
+								"url"
+							]
+						},
+						"description": "Get the Google OAuth URL for authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "Google OAuth Callback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"{{googleIdToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/google/callback",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"google",
+								"callback"
+							]
+						},
+						"description": "Exchange Google ID token for JWT access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify JWT Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"verify"
+							]
+						},
+						"description": "Verify the current JWT token and get user info"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for Google OAuth and JWT verification"
+		},
+		{
+			"name": "Datasets",
+			"item": [
+				{
+					"name": "Get All Datasets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/datasets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"datasets"
+							]
+						},
+						"description": "Retrieve all datasets for the authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dataset by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/datasets/{{datasetId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"datasets",
+								"{{datasetId}}"
+							]
+						},
+						"description": "Retrieve a specific dataset by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Dataset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"First Names\",\n  \"description\": \"Common first names for testing\",\n  \"data\": [\n    \"John\",\n    \"Jane\",\n    \"Michael\",\n    \"Sarah\",\n    \"David\",\n    \"Emily\",\n    \"Robert\",\n    \"Jessica\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/datasets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"datasets"
+							]
+						},
+						"description": "Create a new dataset with name, description, and data array"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dataset",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated First Names\",\n  \"description\": \"Updated description for first names\",\n  \"data\": [\n    \"John\",\n    \"Jane\",\n    \"Michael\",\n    \"Sarah\",\n    \"David\",\n    \"Emily\",\n    \"Robert\",\n    \"Jessica\",\n    \"Alex\",\n    \"Maria\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/datasets/{{datasetId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"datasets",
+								"{{datasetId}}"
+							]
+						},
+						"description": "Update an existing dataset by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Dataset",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/datasets/{{datasetId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"datasets",
+								"{{datasetId}}"
+							]
+						},
+						"description": "Delete a dataset by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Dataset management endpoints (all require authentication)"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API server is running"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "googleIdToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "datasetId",
+			"value": "",
+			"type": "string"
+		}
+	]
+} 
