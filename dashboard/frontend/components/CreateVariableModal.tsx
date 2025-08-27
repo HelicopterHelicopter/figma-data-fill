@@ -27,6 +27,7 @@ export default function CreateVariableModal({
 }: CreateVariableModalProps) {
   const [variableName, setVariableName] = useState("");
   const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [mockData, setMockData] = useState("");
   const [errors, setErrors] = useState<{
     name?: string;
@@ -65,12 +66,13 @@ export default function CreateVariableModal({
         name: variableName.toLowerCase(),
         category: category || "Other",
         data: dataEntries,
-        description: `Mock data for ${variableName}`,
+        description: description || `Mock data for ${variableName}`,
       });
 
       // Reset form
       setVariableName("");
       setCategory("");
+      setDescription("");
       setMockData("");
       setErrors({});
       onClose();
@@ -80,6 +82,7 @@ export default function CreateVariableModal({
   const handleCancel = () => {
     setVariableName("");
     setCategory("");
+    setDescription("");
     setMockData("");
     setErrors({});
     onClose();
@@ -131,6 +134,22 @@ export default function CreateVariableModal({
             />
             <p className="text-sm text-gray-500">
               Optional. Helps organize and filter variables.
+            </p>
+          </div>
+
+          {/* Description Field */}
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-base font-medium">
+              Description
+            </Label>
+            <Input
+              id="description"
+              placeholder="e.g., User names for testing purposes"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <p className="text-sm text-gray-500">
+              Optional. Brief description of what this variable represents.
             </p>
           </div>
 
